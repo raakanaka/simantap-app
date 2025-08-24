@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ExamRequirementSeeder::class,
             StudentSeeder::class,
             AdminSeeder::class,
+            LecturerSeeder::class,
         ]);
     }
 }

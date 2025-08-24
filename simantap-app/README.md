@@ -27,6 +27,16 @@ SIMANTAP adalah aplikasi web berbasis Laravel yang dirancang untuk mengelola pen
 6. **Generate Laporan** - Export laporan dalam format CSV
 7. **Notifikasi** - Memberikan feedback kepada mahasiswa
 
+### Untuk Dosen:
+1. **Login Dosen** - Dosen login menggunakan username dan password
+2. **Dashboard Dosen** - Melihat statistik pengajuan program studi
+3. **Daftar Pengajuan Mahasiswa** - Melihat pengajuan mahasiswa program studi
+4. **Verifikasi Berkas** - Memverifikasi kelengkapan dan keabsahan berkas
+5. **Approve/Reject** - Menyetujui atau menolak pengajuan dengan feedback
+6. **Tugas Dosen** - Melihat pengajuan yang menunggu verifikasi
+7. **Status Pengajuan** - Memantau status semua pengajuan program studi
+8. **Feedback dan Revisi** - Memberikan instruksi revisi jika diperlukan
+
 ## Alur Penggunaan Aplikasi
 
 ### 1. Login Mahasiswa
@@ -161,6 +171,13 @@ Aplikasi sudah dilengkapi dengan data sample:
 - Username: admin, Password: admin123 (Super Admin)
 - Username: verifikator, Password: verifikator123 (Admin)
 - Username: staff, Password: staff123 (Admin)
+
+### Dosen Sample:
+- Username: dosen1, Password: dosen123 (Ketua Program Studi - Teknik Informatika)
+- Username: dosen2, Password: dosen123 (Dosen - Sistem Informasi)
+- Username: dosen3, Password: dosen123 (Dekan - Teknik Informatika)
+- Username: dosen4, Password: dosen123 (Dosen - Sistem Informasi)
+- Username: dosen5, Password: dosen123 (Dosen - Teknik Informatika)
 
 ### Jenis Ujian:
 1. Ujian Komprehensif (UK)

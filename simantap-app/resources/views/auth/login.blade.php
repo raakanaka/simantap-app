@@ -76,6 +76,10 @@
                     <a href="{{ route('admin.login') }}" class="text-decoration-none">
                         <i class="fas fa-user-shield me-1"></i>Login sebagai Admin
                     </a>
+                    <br>
+                    <a href="{{ route('lecturer.login') }}" class="text-decoration-none">
+                        <i class="fas fa-chalkboard-teacher me-1"></i>Login sebagai Dosen
+                    </a>
                 </div>
             </div>
         </div>

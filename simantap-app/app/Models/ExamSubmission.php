@@ -41,10 +41,35 @@ class ExamSubmission extends Model
         return $this->hasMany(SubmissionDocument::class);
     }
 
-    // Relasi dengan admin yang memverifikasi
+    // Relasi dengan admin/dosen yang memverifikasi
     public function verifier()
     {
-        return $this->belongsTo(Admin::class, 'verified_by');
+        // Check if verified_by points to admin or lecturer
+        if ($this->verified_by) {
+            $admin = Admin::find($this->verified_by);
+            if ($admin) {
+                return $admin;
+            }
+            
+            $lecturer = Lecturer::find($this->verified_by);
+            if ($lecturer) {
+                return $lecturer;
+            }
+        }
+        return null;
+    }
+
+    public function verifierType()
+    {
+        if ($this->verified_by) {
+            if (Admin::find($this->verified_by)) {
+                return 'admin';
+            }
+            if (Lecturer::find($this->verified_by)) {
+                return 'lecturer';
+            }
+        }
+        return null;
     }
 
     // Scope untuk submissions berdasarkan status

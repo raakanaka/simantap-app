@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\SubmissionController as AdminSubmissionController
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Lecturer\AuthController as LecturerAuthController;
+use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
+use App\Http\Controllers\Lecturer\SubmissionController as LecturerSubmissionController;
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -76,5 +79,28 @@ Route::prefix('admin')->group(function () {
         Route::get('/reports/export/rejected', [AdminReportController::class, 'exportRejected'])->name('admin.reports.exportRejected');
         Route::get('/reports/export/pending', [AdminReportController::class, 'exportPending'])->name('admin.reports.exportPending');
         Route::get('/reports/export/all', [AdminReportController::class, 'exportAll'])->name('admin.reports.exportAll');
+    });
+});
+
+// Lecturer Routes
+Route::prefix('lecturer')->group(function () {
+    // Lecturer Authentication
+    Route::get('/login', [LecturerAuthController::class, 'showLoginForm'])->name('lecturer.login');
+    Route::post('/login', [LecturerAuthController::class, 'login'])->name('lecturer.login.post');
+    Route::post('/logout', [LecturerAuthController::class, 'logout'])->name('lecturer.logout');
+
+    // Protected Lecturer Routes
+    Route::middleware('lecturer.auth')->group(function () {
+        // Lecturer Dashboard
+        Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('lecturer.dashboard');
+
+        // Lecturer Submissions Management
+        Route::get('/submissions', [LecturerSubmissionController::class, 'index'])->name('lecturer.submissions.index');
+        Route::get('/submissions/{submission}', [LecturerSubmissionController::class, 'show'])->name('lecturer.submissions.show');
+        Route::post('/submissions/{submission}/verify', [LecturerSubmissionController::class, 'verify'])->name('lecturer.submissions.verify');
+        
+        // Lecturer Tasks
+        Route::get('/tasks', [LecturerSubmissionController::class, 'tasks'])->name('lecturer.tasks');
+        Route::get('/status', [LecturerSubmissionController::class, 'status'])->name('lecturer.status');
     });
 });
