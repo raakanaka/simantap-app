@@ -281,10 +281,43 @@ class AdminController extends Controller
         ]);
 
         $student = Student::findOrFail($id);
-        $student->password = $request->new_password;
+        $student->password = Hash::make($request->new_password);
         $student->save();
 
         return redirect()->back()->with('success', 'Password mahasiswa berhasil diperbarui!');
+    }
+
+    public function storeStudent(Request $request)
+    {
+        // Check authentication
+        if (!Session::has('user_id') || Session::get('user_type') !== 'admin') {
+            return redirect()->route('auth.login');
+        }
+
+        $request->validate([
+            'nim' => 'required|string|max:255|unique:students,nim',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:students,email',
+            'password' => 'required|string|min:6|confirmed',
+            'study_program' => 'required|string|max:255',
+            'faculty' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:14',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'status' => 'required|in:active,inactive',
+            'is_verified' => 'boolean'
+        ]);
+
+        $studentData = $request->all();
+        $studentData['password'] = Hash::make($request->password);
+        $studentData['is_verified'] = $request->has('is_verified') ? true : false;
+        $studentData['verified_by'] = $request->has('is_verified') ? Session::get('user_name') : null;
+        $studentData['verified_at'] = $request->has('is_verified') ? now() : null;
+        $studentData['registration_date'] = now();
+        
+        Student::create($studentData);
+
+        return redirect()->back()->with('success', 'Akun mahasiswa berhasil ditambahkan!');
     }
 
     public function destroyStudent($id)

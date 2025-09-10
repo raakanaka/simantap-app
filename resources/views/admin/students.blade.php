@@ -78,6 +78,9 @@
                             Total: {{ $students->count() }} mahasiswa
                         </div>
                         <div class="flex space-x-2">
+                            <button onclick="showAddStudentModal()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
+                                <i class="fas fa-plus mr-2"></i>Tambah Mahasiswa
+                            </button>
                             <button onclick="filterStudents('all')" id="filterAll" class="px-3 py-1 text-sm rounded-lg bg-blue-100 text-blue-800 border border-blue-200">
                                 Semua
                             </button>
@@ -427,6 +430,104 @@
     </div>
 </div>
 
+<!-- Add Student Modal -->
+<div id="addStudentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Tambah Mahasiswa Baru</h3>
+                <button onclick="hideAddStudentModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('admin.students.store') }}" method="POST">
+                @csrf
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">NIM <span class="text-red-500">*</span></label>
+                            <input type="text" name="nim" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan NIM">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nama lengkap">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password <span class="text-red-500">*</span></label>
+                        <input type="password" name="password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan password">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password <span class="text-red-500">*</span></label>
+                        <input type="password" name="password_confirmation" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Konfirmasi password">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi <span class="text-red-500">*</span></label>
+                            <select name="study_program" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Pilih Program Studi</option>
+                                @foreach($studyPrograms as $program)
+                                    <option value="{{ $program->name }}" data-faculty="{{ $program->faculty }}">{{ $program->name }} ({{ $program->code }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fakultas <span class="text-red-500">*</span></label>
+                            <input type="text" name="faculty" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" readonly>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Semester <span class="text-red-500">*</span></label>
+                            <select name="semester" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Pilih Semester</option>
+                                @for($i = 1; $i <= 14; $i++)
+                                    <option value="{{ $i }}">Semester {{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+                            <input type="text" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nomor telepon">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                        <textarea name="address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan alamat"></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status <span class="text-red-500">*</span></label>
+                            <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="active">Aktif</option>
+                                <option value="inactive">Tidak Aktif</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="is_verified" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">Verifikasi langsung</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" onclick="hideAddStudentModal()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Batal
+                    </button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        <i class="fas fa-save mr-2"></i>Tambah Mahasiswa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 function showAlert(message, type = 'info') {
@@ -601,7 +702,37 @@ document.getElementById('changePasswordModal').addEventListener('click', functio
     }
 });
 
-// Handle study program dropdown change
+document.getElementById('addStudentModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideAddStudentModal();
+    }
+});
+
+// Add Student Modal Functions
+function showAddStudentModal() {
+    document.getElementById('addStudentModal').classList.remove('hidden');
+}
+
+function hideAddStudentModal() {
+    document.getElementById('addStudentModal').classList.add('hidden');
+    // Clear form
+    document.querySelector('#addStudentModal form').reset();
+    document.querySelector('input[name="faculty"]').value = '';
+}
+
+// Handle study program dropdown change for add modal
+document.addEventListener('DOMContentLoaded', function() {
+    const addStudyProgramSelect = document.querySelector('#addStudentModal select[name="study_program"]');
+    if (addStudyProgramSelect) {
+        addStudyProgramSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const faculty = selectedOption.getAttribute('data-faculty');
+            document.querySelector('input[name="faculty"]').value = faculty || '';
+        });
+    }
+});
+
+// Handle study program dropdown change for edit modal
 document.getElementById('editStudentStudyProgram').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     const faculty = selectedOption.getAttribute('data-faculty');

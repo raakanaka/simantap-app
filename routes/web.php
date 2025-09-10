@@ -168,6 +168,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
         Route::get('/students', [AdminController::class, 'students'])->name('students');
+        Route::post('/students', [AdminController::class, 'storeStudent'])->name('students.store');
         Route::post('/students/{id}/verify', [AdminController::class, 'verifyStudent'])->name('verify-student');
         Route::put('/students/{id}', [AdminController::class, 'updateStudent'])->name('students.update');
         Route::post('/students/{id}/password', [AdminController::class, 'updateStudentPassword'])->name('students.password');

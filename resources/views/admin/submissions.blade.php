@@ -546,8 +546,14 @@ function previewDocumentInModal(documentId, filename, mimeType) {
 }
 
 function downloadDocumentInModal(documentId, filename) {
+    const submissionId = getCurrentSubmissionId();
+    if (!submissionId) {
+        alert('Error: Tidak dapat menemukan ID pengajuan');
+        return;
+    }
+    
     const link = document.createElement('a');
-    link.href = `/admin/submissions/${getCurrentSubmissionId()}/documents/${documentId}/download`;
+    link.href = `/admin/submissions/${submissionId}/documents/${documentId}/download`;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
@@ -577,8 +583,13 @@ function closeImagePreview() {
 }
 
 function getCurrentSubmissionId() {
+    // Cek apakah currentSubmissionId sudah diset
+    if (currentSubmissionId) {
+        return currentSubmissionId;
+    }
+    
     // Ambil submission ID dari modal yang sedang aktif
-    const modal = document.getElementById('detailModalNew');
+    const modal = document.getElementById('detailModal');
     if (modal) {
         const buttons = modal.querySelectorAll('button[onclick*="acceptSubmission"]');
         if (buttons.length > 0) {
@@ -840,10 +851,18 @@ function downloadDocument(filePath, originalFilename) {
 
 // Function to preview document
 function previewDocument(filePath, originalFilename, mimeType) {
+    const submissionId = getCurrentSubmissionId();
+    const documentId = getCurrentDocumentId();
+    
+    if (!submissionId || !documentId) {
+        alert('Error: Tidak dapat menemukan ID pengajuan atau dokumen');
+        return;
+    }
+    
     if (mimeType.includes('pdf')) {
         // For PDF, use download route to open in new tab
         const link = document.createElement('a');
-        link.href = `/admin/submissions/${getCurrentSubmissionId()}/documents/${getCurrentDocumentId()}/download`;
+        link.href = `/admin/submissions/${submissionId}/documents/${documentId}/download`;
         link.target = '_blank';
         document.body.appendChild(link);
         link.click();
