@@ -338,17 +338,92 @@ function hideRejectModal() {
 
 // Detail Modal Functions
 function openDetailModal(submissionId) {
+    // Set current submission ID untuk context
+    setCurrentDocumentContext(submissionId, null);
+    
     // Ambil data dari server
     fetch(`/admin/submissions/${submissionId}/data`)
         .then(response => response.json())
         .then(data => {
-            showDetailModalWithData(data);
+            showModalWithServerData(submissionId, data);
         })
         .catch(error => {
             console.error('Error:', error);
             // Fallback: buat modal dengan data dari PHP
             showModalWithPHPData(submissionId);
         });
+}
+
+function showModalWithServerData(submissionId, data) {
+    // Set current submission ID untuk context
+    setCurrentDocumentContext(submissionId, null);
+    
+    const modalHTML = `
+        <div id="detailModalNew" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 20px; border-radius: 8px; max-width: 900px; width: 95%; max-height: 90%; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">
+                    <h3 style="margin: 0; color: #1f2937;">Detail Pengajuan Ujian</h3>
+                    <button onclick="closeDetailModal()" style="background: #ef4444; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Tutup</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4 style="color: #374151; margin-bottom: 10px;">Informasi Mahasiswa</h4>
+                        <p><strong>Nama:</strong> ${data.student_name || 'Tidak ada data'}</p>
+                        <p><strong>NIM:</strong> ${data.student_nim || 'Tidak ada data'}</p>
+                        <p><strong>Program Studi:</strong> ${data.student_study_program || 'Tidak ada data'}</p>
+                        <p><strong>Tanggal Pengajuan:</strong> ${data.submitted_at || 'Tidak ada data'}</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #374151; margin-bottom: 10px;">Detail Pengajuan</h4>
+                        <p><strong>Jenis Ujian:</strong> ${data.exam_type || 'Tidak ada data'}</p>
+                        <p><strong>No. Pengajuan:</strong> ${data.submission_number || 'Tidak ada data'}</p>
+                        <p><strong>Status:</strong> <span style="padding: 2px 8px; border-radius: 12px; background: #fef3c7; color: #92400e;">${data.status || 'Tidak ada data'}</span></p>
+                        <p><strong>Jumlah Dokumen:</strong> ${data.documents ? data.documents.length : 0} file</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #374151; margin-bottom: 10px;">Judul & Deskripsi</h4>
+                    <p><strong>Judul:</strong> ${data.title || 'Tidak ada judul'}</p>
+                    <p><strong>Deskripsi:</strong> ${data.description || 'Tidak ada deskripsi'}</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #374151; margin-bottom: 10px;">Dokumen yang Diupload</h4>
+                    <div id="documentsList" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; background: #f9fafb;">
+                        ${data.documents ? data.documents.map(doc => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #e5e7eb; margin-bottom: 10px;">
+                                <div>
+                                    <p style="margin: 0; font-weight: 500;">${doc.original_filename}</p>
+                                    <p style="margin: 0; font-size: 12px; color: #6b7280;">${doc.file_size} bytes</p>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button onclick="setCurrentDocumentContext(${submissionId}, ${doc.id}); previewDocument('${doc.file_path}', '${doc.original_filename}', '${doc.mime_type}')" style="background: #10b981; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </button>
+                                    <button onclick="setCurrentDocumentContext(${submissionId}, ${doc.id}); downloadDocument('${doc.file_path}', '${doc.original_filename}')" style="background: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') : '<p style="text-align: center; color: #6b7280;">Tidak ada dokumen</p>'}
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                    <button onclick="acceptSubmission(${submissionId})" style="background: #10b981; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                        <i class="fas fa-check" style="margin-right: 5px;"></i>Terima
+                    </button>
+                    <button onclick="rejectSubmission(${submissionId})" style="background: #ef4444; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                        <i class="fas fa-times" style="margin-right: 5px;"></i>Tolak
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function showModalWithPHPData(submissionId) {
