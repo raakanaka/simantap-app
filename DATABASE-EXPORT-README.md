@@ -12,6 +12,16 @@
 - Ukuran: 32KB
 - Sama dengan file di atas, tapi dengan opsi export yang lebih lengkap
 
+### 3. `simantap-dynamic-structure-only.sql`
+- Hanya struktur tabel (tanpa data)
+- Ukuran: 18KB
+- Berguna untuk development atau testing
+
+### 4. `simantap-dynamic-data-only.sql`
+- Hanya data (tanpa struktur)
+- Ukuran: 15KB
+- Berguna untuk mengisi database yang sudah ada
+
 ## Data yang Sudah Tersedia
 
 ### 1. **Jenis Ujian (5 jenis)**
